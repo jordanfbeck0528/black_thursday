@@ -1,4 +1,5 @@
 require 'csv'
+require 'pry'
 require 'bigdecimal'
 require_relative './sales_engine'
 require_relative './standard_deviation'
@@ -37,7 +38,7 @@ class SalesAnalyst
   end
 
   def average_by_average_merchant_deviation
-    average_items_per_merchant + average_items_per_merchant_standard_deviation
+    average_items_per_merchant + average_item_standard_deviation
   end
 
   def merchant_names_with_high_item_count

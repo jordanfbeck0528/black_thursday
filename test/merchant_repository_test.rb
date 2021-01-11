@@ -89,7 +89,9 @@ class MerchantRepositoryTest < Minitest::Test
   end
 
   def test_update
-    attributes = {name: "TSSD"}
+    attributes = {
+      name: "TSSD"
+    }
     @m_repo.update(12334141, attributes)
     expected = @m_repo.find_by_id(12334141)
     merchant_test_updated_at = @m_repo.find_by_id(12334141).updated_at.strftime("%d/%m/%Y")
