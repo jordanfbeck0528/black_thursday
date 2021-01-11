@@ -7,7 +7,7 @@ class InvoiceRepository
   include TimeStoreable
 
   attr_reader :all
-  
+
   def initialize(data, engine)
     @all    = []
     @engine = engine
@@ -19,7 +19,7 @@ class InvoiceRepository
   end
 
   def convert_to_invoice(row)
-    row = Invoice.new({id: row[:id],                    
+    row = Invoice.new({id: row[:id],
                     customer_id: row[:customer_id],
                     merchant_id: row[:merchant_id],
                     status: row[:status],
@@ -85,4 +85,7 @@ class InvoiceRepository
     @all.delete(remove)
   end
 
+  def inspect
+   "#<#{self.class} #{@all.size} rows>"
+  end
 end

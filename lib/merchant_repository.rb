@@ -52,7 +52,7 @@ class MerchantRepository
   def update(id, attributes)
     if find_by_id(id) != nil
       update_merchant = all.find { |merchant| merchant.id == id }
-      update_merchant.name = attributes
+      update_merchant.name = attributes[:name]
       update_merchant.updated_at = Time.now
     end
   end
@@ -66,5 +66,9 @@ class MerchantRepository
     all.max_by do |instance|
       instance.id
     end.id + 1
+  end
+
+  def inspect
+   "#<#{self.class} #{@all.size} rows>"
   end
 end
