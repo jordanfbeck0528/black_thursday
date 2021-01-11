@@ -7,7 +7,7 @@ require './lib/item_repository'
 class ItemRepositoryTest < Minitest::Test
 
   def setup
-    @ir = ItemRepository.new("./fixture_data/items_fixtures_file.csv", "engine")
+    @ir = ItemRepository.new("./fixture_data/items_sample.csv", "engine")
   end
 
   def test_it_exists_and_has_attributes
@@ -62,14 +62,17 @@ class ItemRepositoryTest < Minitest::Test
                 :name        => "Pencil",
                 :description => "You can use it to write things",
                 :unit_price  => "1099",
-                :created_at  => Time.now,
                 :updated_at  => Time.now,
                 :merchant_id => 2
                 })
 
     @ir.create(attributes)
+    item_test_created_at = @ir.find_by_id(263399476).updated_at.strftime("%d/%m/%Y")
+    item_test_updated_at = @ir.find_by_id(263399476).updated_at.strftime("%d/%m/%Y")
 
     assert_equal expected, attributes[:id]
+    assert_equal Time.now.strftime("%d/%m/%Y"), item_test_created_at
+    assert_equal Time.now.strftime("%d/%m/%Y"), item_test_updated_at
   end
 
   def test_it_can_update_item
@@ -77,15 +80,15 @@ class ItemRepositoryTest < Minitest::Test
                   name: "Oils",
                   description: "Smelly",
                   id: 23434353455654645}
-
+    original_updated_at = @ir.find_by_id(263397163).updated_at
     @ir.update(263397163, attributes)
-    item_test_updated_at = @ir.find_by_id(263397163).updated_at.strftime("%d/%m/%Y")
+    item_test_updated_at = @ir.find_by_id(263397163).updated_at
 
-    assert_equal BigDecimal.new("37999".to_i)/100, @ir.find_by_id(263397163).unit_price
+    assert_equal BigDecimal("37999"), @ir.find_by_id(263397163).unit_price
     assert_equal "Oils", @ir.find_by_id(263397163).name
     assert_equal "Smelly", @ir.find_by_id(263397163).description
     assert_equal 263397163, @ir.find_by_id(263397163).id
-    assert_equal Time.now.strftime("%d/%m/%Y"), item_test_updated_at
+    assert_equal true, item_test_updated_at > original_updated_at
   end
 
   def test_it_can_delete_item
