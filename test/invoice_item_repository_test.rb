@@ -84,6 +84,6 @@ class InvoiceItemRepositoryTest < Minitest::Test
   end
 
   def test_inspect
-    assert_equal "#<InvoiceItemRepository 584 rows>", @ii.inspect
+    assert_equal "<InvoiceItemRepository 584 rows>", @ii.inspect
   end
 end

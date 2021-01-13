@@ -22,7 +22,7 @@ class TransactionTest < Minitest::Test
     assert_equal "4242424242424242", transaction.credit_card_number
     assert_equal "0220", transaction.credit_card_expiration_date
     assert_equal :success, transaction.result
-    assert_equal true, transaction.created_at > time
-    assert_equal true, transaction.updated_at > time
+    assert_equal true, transaction.created_at >= time
+    assert_equal true, transaction.updated_at >= time
   end
 end
