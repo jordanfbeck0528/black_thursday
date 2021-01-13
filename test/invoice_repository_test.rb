@@ -90,4 +90,8 @@ class InvoiceRepositoryTest < Minitest::Test
     assert_nil @ir.find_by_id(55)
   end
 
+  def test_inspect
+    assert_equal "<InvoiceRepository 137 rows>", @ir.inspect
+  end
+
 end
