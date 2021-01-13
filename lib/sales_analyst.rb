@@ -237,7 +237,7 @@ class SalesAnalyst
 
   def revenue_by_merchant(merchant_id)
     success_array = @engine.transactions.all.find_all do |transaction|
-      invoiced_merchant_id = transaction_to_invoice(transaction).merchant_id
+    invoiced_merchant_id = transaction_to_invoice(transaction).merchant_id
       transaction.result == :success && invoiced_merchant_id == merchant_id
     end
     result = transaction_dollar_value(success_array[0])
