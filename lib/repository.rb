@@ -21,9 +21,18 @@ class Repository
     end
   end
 
+  def find_by_name(name)
+    @all.find do |instance|
+      instance.name.downcase == name.downcase.strip
+    end
+  end
 
+  def find_all_by_name(name)
+    @all.find_all do |instance|
+      instance.name.downcase.include?(name.downcase.strip)
+    end
+  end
 
-  # find_by_name(name)
   # find_all_by_name(name)
   # find_all_by_by_merchant_id(merchant_id)
   # find_all_by_by_customer_id(customer_id)
