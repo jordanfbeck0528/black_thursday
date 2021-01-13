@@ -39,8 +39,11 @@ class Repository
     end
   end
 
-  # find_all_by_by_merchant_id(merchant_id)
-  # find_all_by_by_customer_id(customer_id)
+  def find_all_by_customer_id(id)
+    @all.find_all do |instance|
+     instance.customer_id == id
+    end
+  end
 
   def find_all_by_invoice_id(invoice_id)
     @all.find_all do |instance|
