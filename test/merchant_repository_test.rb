@@ -107,4 +107,8 @@ class MerchantRepositoryTest < Minitest::Test
     assert_equal 11, @m_repo.all.count
     assert_nil @m_repo.find_by_id(12334141)
   end
+
+  def test_inspect
+    assert_equal "<MerchantRepository 12 rows>", @m_repo.inspect
+  end
 end
