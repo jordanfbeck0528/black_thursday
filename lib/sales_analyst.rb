@@ -251,7 +251,6 @@ class SalesAnalyst
     validated_merchant_invoices.each do |invoice|
       array << invoice_total(invoice.id)
     end
-
     array.sum
   end
 
@@ -331,5 +330,47 @@ class SalesAnalyst
     result = actual_final_hash.max_by{|k,v| v}
     item_id = result[0]
     answer_holy_shit = engine.items.find_by_id(item_id)
+  end 
+
+  def most_sold_item_for_merchant(merchant_id)
+    invoice_item_quantity = []
+    invoice_collection = []
+    successful_invoices = []
+    invoice_array = engine.invoices.find_all_by_merchant_id(merchant_id)
+    invoices = invoice_array.find_all do |invoice|
+      transactions = engine.transactions.find_all_by_result(:success)
+      transactions.find_all do |transaction|
+        successful_invoices << invoice if transaction.invoice_id == invoice.id
+      end
+    end
+    invoice_id_array = successful_invoices.map do |invoice|
+      invoice.id
+    end
+    invoice_item_array = []
+    invoice_id_array.each do |invoice_id|
+      invoice_item_array << engine.invoice_items.find_all_by_invoice_id(invoice_id)
+    end
+    invoice_item_array.each do |invoice_item|
+      invoice_collection << invoice_item
+      invoice_item.max_by do |item_object|
+        invoice_item_quantity << item_object.quantity
+      end
+    end
+    highest_invoice_items = []
+    invoice_collection.find_all do |item_array|
+      item_array.find_all do |item|
+        highest_invoice_items << item if item.quantity >= invoice_item_quantity.max
+      end
+    end
+    most_sold_items = highest_invoice_items.map do |invoice_item|
+      invoice_item.item_id
+    end
+    final_array = []
+    most_sold_items.each do |item_id|
+      engine.items.all.find_all do |item_object|
+        final_array << item_object if item_object.id == item_id
+      end
+    end
+    final_array.uniq
   end
 end
