@@ -86,7 +86,10 @@ class TransactionRepositoryTest < Minitest::Test
 
   def test_it_can_delete_transction
     @tr.delete(14)
-
     assert_nil @tr.find_by_id(14)
+  end
+
+  def test_inspect
+    assert_equal "<TransactionRepository 128 rows>", @tr.inspect
   end
 end

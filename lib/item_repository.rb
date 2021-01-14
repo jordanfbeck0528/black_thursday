@@ -2,21 +2,11 @@ require 'csv'
 require 'bigdecimal'
 require 'time'
 require_relative './item'
+require_relative './repository'
 
-class ItemRepository
-  attr_reader :all,
-              :engine
+class ItemRepository < Repository
 
-  def initialize(items_path, engine)
-    @all = []
-    @engine = engine
-
-    CSV.foreach(items_path, headers: true, header_converters: :symbol) do |row|
-      @all << convert_to_item(row)
-    end
-  end
-
-  def convert_to_item(row)
+  def convert_to_object(row)
     row = Item.new({id: row[:id],
                     name: row[:name],
                     description: row[:description],
@@ -27,26 +17,10 @@ class ItemRepository
                    }, self)
   end
 
-  def find_by_id(id)
-    @all.find do |item|
-      item.id == id
-    end
-  end
-
-  def find_by_name(name)
-    @all.find do |item|
-      item.name.downcase == name.downcase.strip
-    end
-  end
-
   def find_all_with_description(description)
     @all.find_all do |item|
       item.description.downcase.include?(description.downcase.strip)
     end
-  end
-
-  def inspect
-    "#<#{self.class} #{@all.size} rows>"
   end
 
   def find_all_by_price(price)
@@ -58,12 +32,6 @@ class ItemRepository
   def find_all_by_price_in_range(range)
     @all.find_all do |item|
       range.include?(item.unit_price)
-    end
-  end
-
-  def find_all_by_merchant_id(merchant_id)
-    @all.find_all do |item|
-      item.merchant_id == merchant_id
     end
   end
 
@@ -80,16 +48,5 @@ class ItemRepository
       update_item.unit_price = BigDecimal(attributes[:unit_price]) if attributes[:unit_price] != nil
       update_item.updated_at = Time.now
     end
-  end
-
-  def delete(id)
-    remove = find_by_id(id)
-    @all.delete(remove)
-  end
-
-  def new_highest_id
-    all.max_by do |instance|
-      instance.id
-    end.id + 1
   end
 end

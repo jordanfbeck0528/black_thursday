@@ -1,25 +1,12 @@
 require 'time'
-require_relative './invoice'
 require 'csv'
-require 'pry'
+require_relative './invoice'
+require_relative './repository'
 
-class InvoiceRepository
-  include TimeStoreable
+class InvoiceRepository < Repository
 
-  attr_reader :all
-  
-  def initialize(invoice_path, engine)
-    @all    = []
-    @engine = engine
-
-
-     CSV.foreach(invoice_path, headers: true, header_converters: :symbol) do |row|
-      @all << convert_to_invoice(row)
-    end
-  end
-
-  def convert_to_invoice(row)
-    row = Invoice.new({id: row[:id],                    
+  def convert_to_object(row)
+    row = Invoice.new({id: row[:id],
                     customer_id: row[:customer_id],
                     merchant_id: row[:merchant_id],
                     status: row[:status],
@@ -28,38 +15,10 @@ class InvoiceRepository
                    }, self)
   end
 
-  def inspect
-    "#<#{self.class} #{@all.size} rows>"
-  end
-
-  def find_by_id(id)
-    @all.find do |invoice|
-     invoice.id == id
-    end
-  end
-
-  def find_all_by_customer_id(id)
-    @all.find_all do |invoice|
-     invoice.customer_id == id
-    end
-  end
-
-  def find_all_by_merchant_id(id)
-    @all.find_all do |invoice|
-     invoice.merchant_id == id
-    end
-  end
-
   def find_all_by_status(status)
     @all.find_all do |invoice|
      invoice.status.downcase == status
     end
-  end
-
-  def new_highest_id
-    all.max_by do |instance|
-      instance.id
-    end.id + 1
   end
 
   def create(attributes)
@@ -83,10 +42,4 @@ class InvoiceRepository
       statuses.include?(status)
     end
   end
-
-  def delete(id)
-    remove = find_by_id(id)
-    @all.delete(remove)
-  end
-
 end

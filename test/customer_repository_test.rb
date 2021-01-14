@@ -15,7 +15,7 @@ class CustomerRepositoryTest < Minitest::Test
   end
 
   def test_it_has_attributes
-    assert_equal 124, @repository.all.length
+    assert_equal 124, @repository.all.count
     assert_equal 11, @repository.all[0].id
     assert_equal "Logan", @repository.all[0].first_name
     assert_equal "Kris", @repository.all[0].last_name
@@ -28,12 +28,12 @@ class CustomerRepositoryTest < Minitest::Test
   end
 
   def test_find_all_by_first_name
-    assert_equal 1, @repository.find_all_by_first_name("Logan").length
+    assert_equal 1, @repository.find_all_by_first_name("LoGan").count
     assert_equal [], @repository.find_all_by_first_name("little lord fauntleroy")
   end
 
   def test_find_all_by_last_name
-    assert_equal 1, @repository.find_all_by_last_name("Kris").length
+    assert_equal 1, @repository.find_all_by_last_name("kris").count
     assert_equal [], @repository.find_all_by_last_name("little lord fauntleroy")
   end
 
@@ -70,6 +70,6 @@ class CustomerRepositoryTest < Minitest::Test
   end
 
   def test_inspect
-    assert_equal "#<CustomerRepository 124 rows>", @repository.inspect
+    assert_equal "<CustomerRepository 124 rows>", @repository.inspect
   end
 end

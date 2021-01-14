@@ -99,6 +99,6 @@ class ItemRepositoryTest < Minitest::Test
   end
 
   def test_inspect
-    assert_equal "#<ItemRepository 29 rows>", @ir.inspect
+    assert_equal "<ItemRepository 29 rows>", @ir.inspect
   end
 end
