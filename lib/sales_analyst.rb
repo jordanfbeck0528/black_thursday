@@ -252,12 +252,6 @@ class SalesAnalyst
     end
 
     array.sum
-    # success_array = @engine.transactions.all.find_all do |transaction|
-    #   invoiced_merchant_id = transaction_to_invoice(transaction).merchant_id
-    #   transaction.result == :success && invoiced_merchant_id == merchant_id
-    # end
-    # result = transaction_dollar_value(success_array[0])
-    # success_array.sum { |transaction| transaction_dollar_value(transaction) }
   end
 
   def invoice_paid_in_full?(invoice_id)
@@ -303,8 +297,38 @@ class SalesAnalyst
     end.reverse
   end
 
-  # WE NEED to get this method working, right now helper method is running too long
   def top_revenue_earners(x = 20)
     merchants_top_revenue_earners[0..x-1]
+  end
+
+  def best_item_for_merchant(merchant_id)
+    invoices_array = engine.invoices.find_all_by_merchant_id(merchant_id)
+    invoices_paid = invoices_array.find_all do |invoice|
+      invoice_paid_in_full?(invoice.id)
+    end
+    final_hash = {}
+    invoices_paid.each do |invoice|
+      engine.invoice_items.find_all_by_invoice_id(invoice.id).each do |invoice_item|
+       if final_hash[invoice_item.item_id].nil?
+        final_hash[invoice_item.item_id] = engine.invoice_items.find_all_by_item_id(invoice_item.item_id)
+       else
+        final_hash[invoice_item.item_id] << engine.invoice_items.find_all_by_item_id(invoice_item.item_id)
+       end
+      end
+    end
+    actual_final_hash = {}
+    final_hash.each do |id, items_array|
+      sum = 0
+      items_array.each do |inv_item|
+        if inv_item.class != InvoiceItem
+        else
+        sum += (inv_item.unit_price * inv_item.quantity)
+        end
+        actual_final_hash[id] = sum
+      end
+    end
+    result = actual_final_hash.max_by{|k,v| v}
+    item_id = result[0]
+    answer_holy_shit = engine.items.find_by_id(item_id)
   end
 end
