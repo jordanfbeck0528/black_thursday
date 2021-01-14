@@ -250,14 +250,7 @@ class SalesAnalyst
     validated_merchant_invoices.each do |invoice|
       array << invoice_total(invoice.id)
     end
-
     array.sum
-    # success_array = @engine.transactions.all.find_all do |transaction|
-    #   invoiced_merchant_id = transaction_to_invoice(transaction).merchant_id
-    #   transaction.result == :success && invoiced_merchant_id == merchant_id
-    # end
-    # result = transaction_dollar_value(success_array[0])
-    # success_array.sum { |transaction| transaction_dollar_value(transaction) }
   end
 
   def invoice_paid_in_full?(invoice_id)
@@ -303,8 +296,49 @@ class SalesAnalyst
     end.reverse
   end
 
-  # WE NEED to get this method working, right now helper method is running too long
   def top_revenue_earners(x = 20)
     merchants_top_revenue_earners[0..x-1]
+  end
+
+  def most_sold_item_for_merchant(merchant_id)
+    invoice_item_quantity = []
+    invoice_collection = []
+    successful_invoices = []
+    invoice_array = engine.invoices.find_all_by_merchant_id(merchant_id)
+    invoices = invoice_array.find_all do |invoice|
+      transactions = engine.transactions.find_all_by_result(:success)
+      transactions.find_all do |transaction|
+        successful_invoices << invoice if transaction.invoice_id == invoice.id
+      end
+    end
+    invoice_id_array = successful_invoices.map do |invoice|
+      invoice.id
+    end
+    invoice_item_array = []
+    invoice_id_array.each do |invoice_id|
+      invoice_item_array << engine.invoice_items.find_all_by_invoice_id(invoice_id)
+    end
+    invoice_item_array.each do |invoice_item|
+      invoice_collection << invoice_item
+      invoice_item.max_by do |item_object|
+        invoice_item_quantity << item_object.quantity
+      end
+    end
+    highest_invoice_items = []
+    invoice_collection.find_all do |item_array|
+      item_array.find_all do |item|
+        highest_invoice_items << item if item.quantity >= invoice_item_quantity.max
+      end
+    end
+    most_sold_items = highest_invoice_items.map do |invoice_item|
+      invoice_item.item_id
+    end
+    final_array = []
+    most_sold_items.each do |item_id|
+      engine.items.all.find_all do |item_object|
+        final_array << item_object if item_object.id == item_id
+      end
+    end
+    final_array.uniq
   end
 end

@@ -200,4 +200,19 @@ class SalesAnalystTest < Minitest::Test
     assert_equal 12, @se.analyst.top_revenue_earners.count
     assert_equal 10, @se.analyst.top_revenue_earners(10).count
   end
+
+  def test_most_sold_item_for_merchant
+    se = SalesEngine.from_csv({
+      :items     => "./data/items.csv",
+      :merchants => "./fixture_data/merchants_sample.csv",
+      :invoices  => "./data/invoices.csv",
+      :invoice_items => "./data/invoice_items.csv",
+      :transactions => "./data/transactions.csv",
+      :customers => "./fixture_data/customers_sample.csv",
+      })
+
+    assert_equal 5, se.analyst.most_sold_item_for_merchant(12334105).count
+    assert_instance_of Item, se.analyst.most_sold_item_for_merchant(12334105)[0]
+    assert_instance_of Array, se.analyst.most_sold_item_for_merchant(12334105)
+  end
 end
